@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EUCheck Admin - Reguli de Conformitate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-gradient: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
+
+    .container {
+      max-width: 1280px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 35px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    p { color: var(--text-muted); font-size: 0.95rem; }
+
+    .btn-create {
+      background: var(--accent-green); color: white; padding: 12px 20px;
+      border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: all 0.2s;
+    }
+    .btn-create:hover { background: #059669; transform: translateY(-1px); }
+
+    /* Grid de Carduri în loc de Tabel */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .rule-card {
+      background: var(--card-gradient);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+    }
+    .rule-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 15px 30px -5px rgba(0,0,0,0.6);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .clause-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .mandatory-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .optional-badge {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .rule-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .rule-details {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .detail-row:last-child { margin-bottom: 0; }
+    .detail-label { color: var(--text-muted); font-weight: 500; }
+    .detail-value { color: #f1f5f9; font-weight: 600; text-align: right; }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+    .btn-edit {
+      flex: 1;
+      background: var(--accent-blue); color: white; padding: 8px 14px;
+      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem;
+      text-align: center; transition: background 0.2s;
+    }
+    .btn-edit:hover { background: #2563eb; }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15); color: #f87171; border: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+    }
+
+    .back-link { display: inline-block; margin-top: 10px; color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <% const current = 'rules'; %>
+  <header class="bg-[#0f172a]/70 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-50 px-8 py-4 flex justify-between items-center transition-all duration-300">
+      <a href="/admin/dashboard" class="flex items-center space-x-3 group">
+          <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 text-white p-2.5 rounded-2xl shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-shield-halved text-lg"></i>
+          </div>
+          <div>
+              <span class="text-lg font-black tracking-wider text-white">EUCHECK </span>
+              <span class="block text-[10px] text-slate-400 font-semibold tracking-widest uppercase">Admin Security</span>
+          </div>
+      </a>
+
+      <nav class="hidden lg:flex space-x-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/80 backdrop-blur-md">
+          <a href="/admin/dashboard" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'dashboard' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Dashboard</a>
+          <a href="/admin/accounts" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'accounts' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Conturi</a>
+          <a href="/admin/standards" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'standards' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Directive UE</a>
+          <a href="/admin/rules" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'rules' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Reguli</a>
+          <a href="/admin/plans" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'plans' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Pachete</a>
+          <a href="/admin/logs" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'logs' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Jurnal</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 bg-slate-900/80 border border-slate-800/80 px-4 py-2 rounded-2xl shadow-inner">
+          <div class="relative flex items-center justify-center">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+              <div class="absolute w-4 h-4 rounded-full bg-emerald-500/40 animate-ping"></div>
+          </div>
+          <span class="text-xs font-bold text-slate-300 tracking-wide"><%= typeof admin !== 'undefined' && admin ? admin.email : 'admin.eucheck@gmail.com' %></span>
+          <a href="/admin/logout" title="Deconectare" class="text-slate-400 hover:text-rose-400 transition ml-2 pl-2 border-l border-slate-700">
+              <i class="fa-solid fa-power-off text-xs"></i>
+          </a>
+      </div>
+  </header>
+
+  <div class="container">
+    <div class="header-flex">
+      <div>
+        <h2>Reguli de Conformitate UE</h2>
+        <p>Gestionează articolele, clauzele tehnice și ponderile de punctaj asociate directivelor.</p>
+      </div>
+      <a href="/admin/rules/create" class="btn-create">+ Adaugă Regulă Nouă</a>
+    </div>
+
+    <div class="rules-grid">
+      <% if (typeof rules !== 'undefined' && rules.length > 0) { %>
+        <% rules.forEach(function(rule) { %>
+          <div class="rule-card">
+            <div>
+              <div class="card-top">
+                <span class="clause-badge"><%= rule.clause || rule.article_code || 'Articol' %></span>
+                <% if (rule.is_mandatory !== false) { %>
+                  <span class="badge mandatory-badge">OBLIGATORIU</span>
+                <% } else { %>
+                  <span class="badge optional-badge">OPȚIONAL</span>
+                <% } %>
+              </div>
+
+              <div class="rule-title"><%= rule.title || rule.name %></div>
+
+              <div class="rule-details">
+                <div class="detail-row">
+                  <span class="detail-label">Standard Părinte:</span>
+                  <span class="detail-value"><%= (rule.standards && (rule.standards.code || rule.standards.title)) || rule.standard_title || rule.standardName || 'Standard Asigurat' %></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Pondere Audit:</span>
+                  <span class="detail-value" style="color: #34d399;"><%= rule.weight || rule.score_weight || '10' %> pct</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <a href="/admin/rules/<%= rule.id %>/edit" class="btn-edit">Editează</a>
+              <form action="/admin/rules/<%= rule.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Sigur doriți să ștergeți această regulă?');" style="display:inline; flex:1;">
+                <button type="submit" class="btn-delete" style="width:100%;">Șterge</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="empty-state">
+          Nu există reguli de conformitate înregistrate în sistem momentan.
+        </div>
+      <% } %>
+    </div>
+
+    <a href="/admin/dashboard" class="back-link">&larr; Înapoi la Dashboard</a>
+  </div>
+
+</body>
+</html>

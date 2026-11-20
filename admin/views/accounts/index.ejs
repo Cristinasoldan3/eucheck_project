@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EUCheck Admin - Gestionare Conturi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
+
+    .container { max-width: 1280px; margin: 40px auto; padding: 30px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    h2 { font-size: 1.5rem; font-weight: 600; color: #fff; }
+    p { color: var(--text-muted); font-size: 0.95rem; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background: rgba(255, 255, 255, 0.02); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    tr:hover td { background: rgba(255, 255, 255, 0.01); }
+
+    .badge { background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; }
+    .badge-b2b { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+    .actions-cell { display: flex; gap: 10px; align-items: center; }
+    .btn-details { background: rgba(148, 163, 184, 0.15); color: #e2e8f0; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+    .btn-details:hover { background: rgba(148, 163, 184, 0.25); }
+    .btn-edit { background: var(--accent-blue); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; }
+    .btn-edit:hover { background: #2563eb; }
+    .btn-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+    .back-link { display: inline-block; margin-top: 25px; color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <% const current = 'accounts'; %>
+  <header class="bg-[#0f172a]/70 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-50 px-8 py-4 flex justify-between items-center transition-all duration-300">
+      <a href="/admin/dashboard" class="flex items-center space-x-3 group">
+          <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 text-white p-2.5 rounded-2xl shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-shield-halved text-lg"></i>
+          </div>
+          <div>
+              <span class="text-lg font-black tracking-wider text-white">EUCHECK </span>
+              <span class="block text-[10px] text-slate-400 font-semibold tracking-widest uppercase">Admin Security</span>
+          </div>
+      </a>
+
+      <nav class="hidden lg:flex space-x-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/80 backdrop-blur-md">
+          <a href="/admin/dashboard" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'dashboard' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Dashboard</a>
+          <a href="/admin/accounts" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'accounts' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Conturi</a>
+          <a href="/admin/standards" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'standards' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Directive UE</a>
+          <a href="/admin/rules" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'rules' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Reguli</a>
+          <a href="/admin/plans" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'plans' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Pachete</a>
+          <a href="/admin/logs" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'logs' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Jurnal</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 bg-slate-900/80 border border-slate-800/80 px-4 py-2 rounded-2xl shadow-inner">
+          <div class="relative flex items-center justify-center">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+              <div class="absolute w-4 h-4 rounded-full bg-emerald-500/40 animate-ping"></div>
+          </div>
+          <span class="text-xs font-bold text-slate-300 tracking-wide"><%= typeof admin !== 'undefined' && admin ? admin.email : 'admin.eucheck@gmail.com' %></span>
+          <a href="/admin/logout" title="Deconectare" class="text-slate-400 hover:text-rose-400 transition ml-2 pl-2 border-l border-slate-700">
+              <i class="fa-solid fa-power-off text-xs"></i>
+          </a>
+      </div>
+  </header>
+
+  <div class="container">
+    <div class="header-flex">
+      <div>
+        <h2>Gestionare Conturi Utilizatori</h2>
+        <p>Monitorizează conturile înregistrate, soldul de tokeni și datele firmelor B2B.</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Email Utilizator</th>
+          <th>Companie / CUI (B2B)</th>
+          <th>Nivel Pachet (Tier)</th>
+          <th>Balanță Tokeni</th>
+          <th>Export PDF</th>
+          <th>Acțiuni Administrator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (typeof accounts !== 'undefined' && accounts.length > 0) { %>
+          <% accounts.forEach(function(acc) { %>
+            <tr>
+              <td><strong><%= acc.email %></strong></td>
+              <td>
+                <% if (acc.is_company || acc.company_name) { %>
+                  <span class="badge badge-b2b"><%= acc.company_name || 'Firmă B2B' %></span>
+                  <% if (acc.vat_number) { %>
+                    <br><small style="color: var(--text-muted);"><%= acc.vat_number %></small>
+                  <% } %>
+                <% } else { %>
+                  <span style="color: var(--text-muted);">Persoană Fizică</span>
+                <% } %>
+              </td>
+              <td><span class="badge"><%= acc.tier %></span></td>
+              <td><strong><%= acc.tokens_balance %> tokeni</strong></td>
+              <td><%= acc.can_export_pdf ? 'DA' : 'NU' %></td>
+              <td class="actions-cell">
+                <a href="/admin/accounts/<%= acc.id %>" class="btn-details">Detalii</a>
+                <a href="/admin/accounts/<%= acc.id %>/edit" class="btn-edit">Editează</a>
+                <form action="/admin/accounts/<%= acc.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Sigur doriți să ștergeți acest cont?');" style="display:inline;">
+                  <button type="submit" class="btn-delete">Șterge</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Nu există conturi înregistrate în baza de date momentan.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <a href="/admin/dashboard" class="back-link">&larr; Înapoi la Dashboard</a>
+  </div>
+
+</body>
+</html>

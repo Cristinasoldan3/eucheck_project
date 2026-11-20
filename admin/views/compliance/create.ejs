@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EUCheck Admin - Adaugă Regulă de Conformitate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-gradient: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: 50px; }
+
+    .container {
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .card {
+      background: var(--card-gradient);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.55);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+    }
+
+    h2 { font-size: 1.65rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+
+    .form-group { margin-bottom: 20px; }
+    label.field-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    select option { background: #1e293b; color: #fff; }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .checkbox-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      cursor: pointer;
+      height: 100%;
+    }
+    .checkbox-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-green);
+      cursor: pointer;
+    }
+    .checkbox-card span {
+      color: #f1f5f9;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-submit {
+      flex: 1;
+      background: var(--accent-green);
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.28);
+    }
+    .btn-submit:hover { background: #059669; transform: translateY(-1px); }
+
+    .btn-cancel {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <% const current = 'rules'; %>
+  <header class="bg-[#0f172a]/70 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-50 px-8 py-4 flex justify-between items-center transition-all duration-300">
+      <a href="/admin/dashboard" class="flex items-center space-x-3 group">
+          <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 text-white p-2.5 rounded-2xl shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-shield-halved text-lg"></i>
+          </div>
+          <div>
+              <span class="text-lg font-black tracking-wider text-white">EUCHECK </span>
+              <span class="block text-[10px] text-slate-400 font-semibold tracking-widest uppercase">Admin Security</span>
+          </div>
+      </a>
+
+      <nav class="hidden lg:flex space-x-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/80 backdrop-blur-md">
+          <a href="/admin/dashboard" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'dashboard' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Dashboard</a>
+          <a href="/admin/accounts" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'accounts' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Conturi</a>
+          <a href="/admin/standards" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'standards' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Directive UE</a>
+          <a href="/admin/rules" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'rules' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Reguli</a>
+          <a href="/admin/plans" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'plans' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Pachete</a>
+          <a href="/admin/logs" class="px-4 py-2 rounded-xl text-xs transition-all <%= current === 'logs' ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 font-medium' %>">Jurnal</a>
+      </nav>
+
+      <div class="flex items-center space-x-3 bg-slate-900/80 border border-slate-800/80 px-4 py-2 rounded-2xl shadow-inner">
+          <div class="relative flex items-center justify-center">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+              <div class="absolute w-4 h-4 rounded-full bg-emerald-500/40 animate-ping"></div>
+          </div>
+          <span class="text-xs font-bold text-slate-300 tracking-wide"><%= typeof admin !== 'undefined' && admin ? admin.email : 'admin.eucheck@gmail.com' %></span>
+          <a href="/admin/logout" title="Deconectare" class="text-slate-400 hover:text-rose-400 transition ml-2 pl-2 border-l border-slate-700">
+              <i class="fa-solid fa-power-off text-xs"></i>
+          </a>
+      </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Adaugă Regulă de Conformitate</h2>
+      <div class="subtitle">Definește cerința tehnică, clauza din normativ și ponderea de audit.</div>
+
+      <form action="/admin/rules/create" method="POST">
+        <div class="form-group">
+          <label class="field-label" for="standard_id">Directivă / Standard Părinte</label>
+          <select id="standard_id" name="standard_id" required>
+            <% if (typeof standards !== 'undefined' && standards.length > 0) { %>
+              <% standards.forEach(function(s) { %>
+                <option value="<%= s.id %>"><%= s.code %> - <%= s.title %></option>
+              <% }); %>
+            <% } else { %>
+              <option value="">Niciun standard disponibil</option>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="field-label" for="clause_reference">Referință Clauză / Articol</label>
+          <input type="text" id="clause_reference" name="clause_reference" placeholder="ex: Art. 5 alin. (2) / Anexa I pct. 1.1.2" required />
+        </div>
+
+        <div class="form-group">
+          <label class="field-label" for="title">Titlu Regulă</label>
+          <input type="text" id="title" name="title" placeholder="ex: Marcaj CE vizibil și lizibil pe echipament" required />
+        </div>
+
+        <div class="form-group row-2">
+          <div>
+            <label class="field-label" for="weight">Pondere Punctaj</label>
+            <input type="number" id="weight" name="weight" value="10" min="0" max="100" />
+          </div>
+
+          <div>
+            <label class="field-label">Caracter Regulă</label>
+            <label class="checkbox-card" for="is_mandatory">
+              <input type="checkbox" id="is_mandatory" name="is_mandatory" checked />
+              <span>Regulă obligatorie în audit</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="field-label" for="recommendation">Recomandare / Acțiune Corectivă</label>
+          <input type="text" id="recommendation" name="recommendation" placeholder="ex: atașează declarația UE de conformitate și manualul în limba română" />
+        </div>
+
+        <div class="actions-row">
+          <button type="submit" class="btn-submit">Salvează Regula</button>
+          <a href="/admin/rules" class="btn-cancel">Înapoi la Listă</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
